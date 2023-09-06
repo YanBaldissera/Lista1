@@ -1,3 +1,11 @@
+""" Para fazer a montagem do jogo pensei em criar a tabela utilizando uma matriz assim já ficava mais fácil para o próximo exercício
+depois fiz uma união da matriz utilizando join, para fazer a verificaçõa da vitória utilizei o all que foi mostrado em sala aonde 
+conseguimos verificar toda a linha, ai depois temos a função do jogo aonde ele vai solicitar para o jogador a posição e fazer a verificação
+se não existe já alguma joga  na posição e verificar se houve algum vencedor."""
+
+
+
+
 def criarTabuleiro():
     """ Vai retornar o tabuleiro """
     tabuleiro = [[" " for _ in range(4)] for _ in range(4)]
