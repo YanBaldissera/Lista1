@@ -29,17 +29,11 @@ def mostrarAlfabeto(letrasTentadas):
     return "Alfabeto restante: " + " ".join(alfabeto_completo)
 
 def mostrarTentativasAnteriores(tentativas_anteriores):
-    for i, (tentativa, letras_coloridas) in enumerate(tentativas_anteriores):
+    for i, (tentativa, cores) in enumerate(tentativas_anteriores):
         print(f"Tentativa {i + 1}: ", end="")
-        for item in letras_coloridas:
-            letra, posicao, cor = item
-            if posicao != -1:
-                print(colored(letra, cor), end=f" (posição {posicao + 1}) ")
-            else:
-                print(colored(letra, cor), end=" (não está na palavra) ")
+        for letra, cor in cores:
+            print(colored(letra, cor), end=" ")
         print()
-
-
 
 def verificacaoDaPalavra(palavra, tentativa):
     correto = []
@@ -48,15 +42,12 @@ def verificacaoDaPalavra(palavra, tentativa):
 
     for i in range(len(palavra)):
         if palavra[i] == tentativa[i]:
-            correto.append((palavra[i], i, 'green'))  # Adiciona a posição
+            correto.append((palavra[i], 'green'))
         elif tentativa[i] in palavra:
-            incorretas.append((tentativa[i], i, 'yellow'))  # Adiciona a posição
+            incorretas.append((tentativa[i], 'yellow'))
             posicoes_incorretas.append(i)
         else:
-            incorretas.append((tentativa[i], -1, 'red'))  # Usar -1 para indicar que não está na palavra
-
-    # Ordena as letras corretas de acordo com as posições originais
-    correto.sort(key=lambda x: x[1])
+            incorretas.append((tentativa[i], 'red'))
 
     return correto, incorretas, posicoes_incorretas
 
