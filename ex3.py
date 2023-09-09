@@ -1,3 +1,9 @@
+""" Para o jogo do termo utilizei a biblioteca que o professor falou na aula sobre as cores. Utilizei a mesma função de leitura 
+arquivo do código da forca. depois temos uma função para selecionar uma palavra aleátoria do arquivo de tamanho 5. A função mostrarAlfabeto
+para retorna o alfabeto e vai removendo a cada tentativa as letras que já foram utilizadas. A função verificacaoDaPalavrafunção 
+compara a palavra escolhida com a tentativa do jogador e retorna a tentativa colorida com base nas correspondências com a palavra 
+escolhida. Depois temos o jogo aonde fazemos as solicitações para os usuários e fazemos as verificações e chamadas das funções"""
+
 import random
 from termcolor import colored
 
@@ -11,17 +17,15 @@ def le_arquivo(arq):
 
 lista = le_arquivo(arquivo)
 alfabeto = "abcdefghijklmnopqrstuvwxyz"
-palavras = [palavra for palavra in lista if len(palavra) == 5]  # Filtro para palavras de tamanho 5
+palavras = [palavra for palavra in lista if len(palavra) == 5]
 
 def selecionaPalavra():
-    """Vai retornar uma palavra aleátoriamente do arquivo """
+    """Vai retornar uma palavra aleatoriamente do arquivo """
     palavraEscolhida = random.choice(palavras)
     return palavraEscolhida
 
-def palavraOculta(palavra):
-    return ['*'] * len(palavra)
-
 def mostrarAlfabeto(letrasTentadas):
+    """Retorna o alfabeto com as letras que já foram utilizadas removidas"""
     alfabeto_completo = list(alfabeto)
     for letra in letrasTentadas:
         if letra in alfabeto_completo:
@@ -29,69 +33,58 @@ def mostrarAlfabeto(letrasTentadas):
     return "Alfabeto restante: " + " ".join(alfabeto_completo)
 
 def mostrarTentativasAnteriores(tentativas_anteriores):
-    for i, (tentativa, cores) in enumerate(tentativas_anteriores):
-        print(f"Tentativa {i + 1}: ", end="")
-        for letra, cor in cores:
-            print(colored(letra, cor), end=" ")
-        print()
+    """Imprime no jogo as tentativas anteriores"""
+    for i, (tentativa, resultado) in enumerate(tentativas_anteriores):
+        palavra_mostrada = " ".join(resultado)
+        print(f"Tentativa {i + 1}: {palavra_mostrada}")
 
-def verificacaoDaPalavra(palavra, tentativa):
-    correto = []
-    incorretas = []
-    posicoes_incorretas = []
+def verificacaoDaPalavra(palavra, tentativa, palavra_escondida):
+    """Retorna a palavra colorida"""
+    tentativa_colorida = [''] * len(palavra)
 
     for i in range(len(palavra)):
         if palavra[i] == tentativa[i]:
-            correto.append((palavra[i], 'green'))
+            tentativa_colorida[i] = colored(tentativa[i], 'green')
         elif tentativa[i] in palavra:
-            incorretas.append((tentativa[i], 'yellow'))
-            posicoes_incorretas.append(i)
+            tentativa_colorida[i] = colored(tentativa[i], 'yellow')
         else:
-            incorretas.append((tentativa[i], 'red'))
+            tentativa_colorida[i] = colored(tentativa[i], 'black')
 
-    return correto, incorretas, posicoes_incorretas
+    for i, letra_colorida in enumerate(tentativa_colorida):
+        if letra_colorida:
+            palavra_escondida[i] = letra_colorida
+
+    return tentativa_colorida
 
 palavraEscolhida = selecionaPalavra()
-palavraEscondida = palavraOculta(palavraEscolhida)
+palavraEscondida = ['*'] * len(palavraEscolhida)
 
-acerto = len(palavraEscolhida)
 vida = 6
 tentativas = 0
 letras_tentadas = []
-tentativas_anteriores = []
+tentativasAnteriores = []
 
 print("\nBem-vindo ao jogo Termo!\n")
 
 while vida != 0:
-    print("Palavra escondida:", " ".join(palavraEscondida))
-    mostrarTentativasAnteriores(tentativas_anteriores)
+    mostrarTentativasAnteriores(tentativasAnteriores)
     print(mostrarAlfabeto(letras_tentadas))
-    tentativa = input("Entre com a palavra desejada: ").lower()
+    tentativa = input("Entre com a palavra desejada com um tamanho de 5 letras: ").lower()
 
     if tentativa == palavraEscolhida:
         palavraEscondida = list(palavraEscolhida)
         print(f"Você acertou! A palavra era: {palavraEscolhida}")
         break
 
-    letras_tentadas.extend(tentativa)  # Adiciona as letras tentadas à lista
+    letras_tentadas.extend(tentativa)
 
-    corretas, incorretas, posicoes_incorretas = verificacaoDaPalavra(palavraEscolhida, tentativa)
+    tentativaColorida = verificacaoDaPalavra(palavraEscolhida, tentativa, palavraEscondida)
     vida -= 1
     tentativas += 1
 
-    tentativas_anteriores.append((tentativa, corretas + incorretas))  # Adiciona a tentativa atual e suas cores às tentativas anteriores
+    tentativasAnteriores.append((tentativa, tentativaColorida.copy()))
 
     if tentativas < 6:
-        print("Letras corretas:", end=" ")
-        for letra, cor in corretas:
-            print(colored(letra, cor), end=" ")
-        print()  # Adicione esta linha para imprimir uma nova linha no final
-
-        print("Letras incorretas:", end=" ")
-        for letra, cor in incorretas:
-            print(colored(letra, cor), end=" ")
-        print()  # Adicione esta linha para imprimir uma nova linha no final
-
         print(f"Tentativas restantes: {6 - tentativas}")
 
     if vida == 0:
